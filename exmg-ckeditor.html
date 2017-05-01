@@ -1,0 +1,179 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-input/paper-input-container.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
+
+<link rel="import" href="exmg-ckeditor-import.html">
+
+<!--
+`exmg-ckeditor`
+Paper style ckeditor input type
+
+@demo demo/index.html
+-->
+
+<dom-module id="exmg-ckeditor">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      :host([focused]) {
+        outline: none;
+      }
+
+      [hidden],
+      :host([hidden]) {
+        display: none !important;
+      }
+
+      input::-webkit-input-placeholder {
+        color: var(--paper-input-container-color, --secondary-text-color);
+      }
+
+      input:-moz-placeholder {
+        color: var(--paper-input-container-color, --secondary-text-color);
+      }
+
+      input::-moz-placeholder {
+        color: var(--paper-input-container-color, --secondary-text-color);
+      }
+
+      input:-ms-input-placeholder {
+        color: var(--paper-input-container-color, --secondary-text-color);
+      }
+
+      label {
+        pointer-events: none;
+      }
+    </style>
+
+    <paper-input-container no-label-float="[[noLabelFloat]]" always-float-label auto-validate$="[[autoValidate]]" disabled$="[[disabled]]" invalid="[[invalid]]">
+
+      <content select="[prefix]"></content>
+
+      <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
+      <input is="iron-input" id="input"
+        bind-value="{{value}}"
+        invalid="{{invalid}}"
+        prevent-invalid-input="[[preventInvalidInput]]"
+        allowed-pattern="[[allowedPattern]]"
+        validator="[[validator]]"
+        pattern$="[[pattern]]"
+        required$="[[required]]"
+        autocomplete$="[[autocomplete]]"
+        inputmode$="[[inputmode]]"
+        minlength$="[[minlength]]"
+        maxlength$="[[maxlength]]"
+        min$="[[min]]"
+        max$="[[max]]"
+        name$="[[name]]"
+        placeholder$="[[placeholder]]"
+        readonly$="[[readonly]]"
+        list$="[[list]]"
+        size$="[[size]]"
+        autocapitalize$="[[autocapitalize]]"
+        autocorrect$="[[autocorrect]]"
+        on-change="_onChange"
+        autosave$="[[autosave]]"
+        results$="[[results]]"
+        tabindex="-1"
+        hidden>
+
+        <textarea
+          id="editor"
+          autofocus$="[[autofocus]]"
+          aria-labelledby$="[[_ariaLabelledBy]]"
+          aria-describedby$="[[_ariaDescribedBy]]"
+          title$="[[title]]"
+          disabled$="[[disabled]]"
+          tabindex$="[[tabindex]]">
+        </textarea>
+
+      <content select="[suffix]"></content>
+
+      <!--template is="dom-if" if="[[errorMessage]]">
+        <paper-input-error aria-live="assertive">[[errorMessage]]</paper-input-error>
+      </template-->
+
+      <template is="dom-if" if="[[charCounter]]">
+        <paper-input-char-counter></paper-input-char-counter>
+      </template>
+
+    </paper-input-container>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'exmg-ckeditor',
+      behaviors: [
+        Polymer.IronFormElementBehavior,
+        Polymer.PaperInputBehavior,
+        Polymer.IronValidatableBehavior
+      ],
+      properties: {
+        /**
+         * CKEditor configuration object. Please visit http://docs.ckeditor.com/#!/guide/dev_configuration for more information
+         */
+        config: {
+          type: Object,
+          observer: '_observeConfig'
+        },
+        _editorReady: {
+          type: Boolean,
+          value: false
+        }
+      },
+      observers: [
+        '_observeValue(value, _editorReady)',
+      ],
+      /**
+       * Returns a reference to the editor .
+       */
+      get editor() {
+        return this._editor;
+      },
+      _observeValue: function(value, _editorReady) {
+        if(_editorReady && this._editor.getData() !== value) {
+          this._editor.setData(value);
+        }
+      },
+      _observeConfig: function(config) {
+        if(!this._editorReady) {
+          return;
+        }
+        this.destroyEditor();
+        this.initializeEditor();
+      },
+      /**
+       *  Initialize editor to replace textarea. Please note that this method will automaticly be called uppon load.
+       */
+      initializeEditor: function() {
+        var config = this.config || {};
+        if(typeof config === 'string') {
+          config = JSON.parse(config);
+        }
+        this._editor = CKEDITOR.replace(this.$.editor, config);
+        this._editor.on('instanceReady', () => this._editorReady = true);
+        this._editor.on('change', () => this.value = this._editor.getData());
+      },
+      /**
+       *  Destroy editor instance
+       */
+      destroyEditor: function() {
+        if(this._editor) {
+          this._editor.destroy();
+        }
+      },
+      attached: function() {
+        this.initializeEditor();
+      },
+      detached: function() {
+        this.destroyEditor();
+      }
+    });
+  </script>
+</dom-module>

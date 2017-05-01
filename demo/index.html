@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>exmg-ckeditor demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../exmg-ckeditor.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .centered {
+        max-width: 700px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic exmg-ckeditor demo</h3>
+      <demo-snippet>
+        <template>
+          <exmg-ckeditor label="Text Input" value="<h3>Test</h3>" required auto-validate></exmg-ckeditor>
+        </template>
+      </demo-snippet>
+
+      <demo-snippet>
+        <template>
+          <exmg-ckeditor label="Text Input" config='{"customConfig":"/config-test.js"}' value="<h3>Test</h3>" required auto-validate></exmg-ckeditor>
+        </template>
+      </demo-snippet>
+
+    </div>
+  </body>
+</html>
