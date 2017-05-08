@@ -2,7 +2,7 @@
   "name": "exmg-ckeditor",
   "description": "Paper style ckeditor input type",
   "main": "exmg-ckeditor.html",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "authors": [
     "Mark Smits"
   ],

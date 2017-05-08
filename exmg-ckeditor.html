@@ -129,12 +129,18 @@ Paper style ckeditor input type
       },
       observers: [
         '_observeValue(value, _editorReady)',
+        '_observeReady(_editorReady)',
       ],
       /**
        * Returns a reference to the editor .
        */
       get editor() {
         return this._editor;
+      },
+      _observeReady: function(_editorReady) {
+        if(_editorReady) {
+          this.fire('editor-ready', this.editor);
+        }
       },
       _observeValue: function(value, _editorReady) {
         if(_editorReady && this._editor.getData() !== value) {
