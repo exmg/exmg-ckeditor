@@ -199,7 +199,9 @@ Paper style ckeditor input type
        * @param {Number} height
        */
       _setEditorDimensions(config, width, height) {
-        config = JSON.parse(config);
+        if (typeof config === 'string') {
+          config = JSON.parse(config);
+        }
         config.width = width;
         config.height = height;
         this.set('config', JSON.stringify(config));
