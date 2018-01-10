@@ -133,6 +133,20 @@ Paper style ckeditor input type
           observer: '_observeConfig'
         },
         /**
+         * CKEditor width
+         */
+        width: {
+          type: Number,
+          value: 800
+        },
+        /**
+         * CKEditor height
+         */
+        height: {
+          type: Number,
+          value: 300
+        },
+        /**
          * Enable inline editing
          */
         inline: {
@@ -147,6 +161,7 @@ Paper style ckeditor input type
       observers: [
         '_observeValue(value, _editorReady)',
         '_observeReady(_editorReady)',
+        '_setEditorDimensions(config, width, height)'
       ],
       /**
        * Returns a reference to the editor.
@@ -176,6 +191,18 @@ Paper style ckeditor input type
         }
         this.destroyEditor();
         this.initializeEditor();
+      },
+      /**
+       * set editor width and height
+       * @param {String} config
+       * @param {Number} width
+       * @param {Number} height
+       */
+      _setEditorDimensions(config, width, height) {
+        config = JSON.parse(config);
+        config.width = width;
+        config.height = height;
+        this.set('config', JSON.stringify(config));
       },
       /**
        * Initialize editor to replace textarea. Please note that this method will automaticly be called uppon load.
