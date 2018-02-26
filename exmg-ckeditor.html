@@ -62,40 +62,40 @@ Paper style ckeditor input type
 
       <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
       <input is="iron-input" id="input"
-        bind-value="{{value}}"
-        invalid="{{invalid}}"
-        prevent-invalid-input="[[preventInvalidInput]]"
-        allowed-pattern="[[allowedPattern]]"
-        validator="[[validator]]"
-        pattern$="[[pattern]]"
-        required$="[[required]]"
-        autocomplete$="[[autocomplete]]"
-        inputmode$="[[inputmode]]"
-        minlength$="[[minlength]]"
-        maxlength$="[[maxlength]]"
-        min$="[[min]]"
-        max$="[[max]]"
-        name$="[[name]]"
-        placeholder$="[[placeholder]]"
-        readonly$="[[readonly]]"
-        list$="[[list]]"
-        size$="[[size]]"
-        autocapitalize$="[[autocapitalize]]"
-        autocorrect$="[[autocorrect]]"
-        on-change="_onChange"
-        autosave$="[[autosave]]"
-        results$="[[results]]"
-        tabindex="-1"
-        hidden>
+             bind-value="{{value}}"
+             invalid="{{invalid}}"
+             prevent-invalid-input="[[preventInvalidInput]]"
+             allowed-pattern="[[allowedPattern]]"
+             validator="[[validator]]"
+             pattern$="[[pattern]]"
+             required$="[[required]]"
+             autocomplete$="[[autocomplete]]"
+             inputmode$="[[inputmode]]"
+             minlength$="[[minlength]]"
+             maxlength$="[[maxlength]]"
+             min$="[[min]]"
+             max$="[[max]]"
+             name$="[[name]]"
+             placeholder$="[[placeholder]]"
+             readonly$="[[readonly]]"
+             list$="[[list]]"
+             size$="[[size]]"
+             autocapitalize$="[[autocapitalize]]"
+             autocorrect$="[[autocorrect]]"
+             on-change="_onChange"
+             autosave$="[[autosave]]"
+             results$="[[results]]"
+             tabindex="-1"
+             hidden>
 
-        <textarea
-          id="editor"
-          autofocus$="[[autofocus]]"
-          aria-labelledby$="[[_ariaLabelledBy]]"
-          aria-describedby$="[[_ariaDescribedBy]]"
-          title$="[[title]]"
-          disabled$="[[disabled]]"
-          tabindex$="[[tabindex]]">
+      <textarea
+        id="editor"
+        autofocus$="[[autofocus]]"
+        aria-labelledby$="[[_ariaLabelledBy]]"
+        aria-describedby$="[[_ariaDescribedBy]]"
+        title$="[[title]]"
+        disabled$="[[disabled]]"
+        tabindex$="[[tabindex]]">
         </textarea>
 
       <content select="[suffix]"></content>
@@ -111,7 +111,7 @@ Paper style ckeditor input type
     </paper-input-container>
 
     <div hidden$="[[!inline]]" id="inlineEditor" contenteditable="true">
-        {{value}}
+      {{value}}
     </div>
   </template>
 
@@ -217,7 +217,11 @@ Paper style ckeditor input type
         this._editor = this.inline ?
           CKEDITOR.inline(this.$.inlineEditor, config) : CKEDITOR.replace(this.$.editor, config);
         this._editor.on('instanceReady', () => this._editorReady = true);
-        this._editor.on('change', () => this.value = this._editor.getData());
+        //this._editor.on('change', () => this.value = this._editor.getData());
+        this._editor.on('change', () => {
+          //this.value = this._editor.getData();
+          this.fire('editor-changed', this._editor);
+        });
       },
       /**
        *  Destroy editor instance
@@ -226,6 +230,21 @@ Paper style ckeditor input type
         if (this._editor) {
           this._editor.destroy();
         }
+      },
+      /**
+       * get the editor content
+       * @param {String} html
+       */
+      getData() {
+        return this._editor.getData();
+      },
+      /**
+       * set the editor content
+       * @param {String} html
+       */
+      setData(html) {
+        this._editor.setData(html);
+        //console.log(this._editor, this._editor.getData());
       },
       /**
        * Insert text into ckeditor
