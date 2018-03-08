@@ -216,10 +216,12 @@ Paper style ckeditor input type
         }
         this._editor = this.inline ?
           CKEDITOR.inline(this.$.inlineEditor, config) : CKEDITOR.replace(this.$.editor, config);
-        this._editor.on('instanceReady', () => this._editorReady = true);
-        //this._editor.on('change', () => this.value = this._editor.getData());
+        this._editor.on('instanceReady', () => {
+          this._editorReady = true
+          this.fire('editor-ready', this._editor);
+        });
         this._editor.on('change', () => {
-          //this.value = this._editor.getData();
+          this.value = this._editor.getData();
           this.fire('editor-changed', this._editor);
         });
       },
