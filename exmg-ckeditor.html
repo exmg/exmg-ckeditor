@@ -60,8 +60,8 @@ Paper style ckeditor input type
 
       <content select="[prefix]"></content>
 
-      <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
-      <input is="iron-input" id="input"
+      <label hidden$="[[!label]]" aria-hidden="true">[[label]]</label>
+      <input is="iron-input"
         bind-value="{{value}}"
         invalid="{{invalid}}"
         prevent-invalid-input="[[preventInvalidInput]]"
@@ -204,6 +204,7 @@ Paper style ckeditor input type
         }
         config.width = width;
         config.height = height;
+        config.autoParagraph = false;
         this.set('config', JSON.stringify(config));
       },
       /**
@@ -216,8 +217,14 @@ Paper style ckeditor input type
         }
         this._editor = this.inline ?
           CKEDITOR.inline(this.$.inlineEditor, config) : CKEDITOR.replace(this.$.editor, config);
-        this._editor.on('instanceReady', () => this._editorReady = true);
-        this._editor.on('change', () => this.value = this._editor.getData());
+        this._editor.on('instanceReady', () => {
+          this._editorReady = true;
+          this.fire('editor-ready', this._editor);
+        });
+        this._editor.on('change', () => {
+          this.value = this._editor.getData();
+          this.fire('editor-changed', this._editor);
+        });
       },
       /**
        *  Destroy editor instance
@@ -226,6 +233,21 @@ Paper style ckeditor input type
         if (this._editor) {
           this._editor.destroy();
         }
+      },
+      /**
+       * get the editor content
+       * @param {String} html
+       */
+      getData() {
+        return this._editor.getData();
+      },
+      /**
+       * set the editor content
+       * @param {String} html
+       */
+      setData(html) {
+        this._editor.setData(html);
+        //console.log(this._editor, this._editor.getData());
       },
       /**
        * Insert text into ckeditor
