@@ -60,8 +60,8 @@ Paper style ckeditor input type
 
       <content select="[prefix]"></content>
 
-      <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
-      <input is="iron-input" id="input"
+      <label hidden$="[[!label]]" aria-hidden="true">[[label]]</label>
+      <input is="iron-input"
         bind-value="{{value}}"
         invalid="{{invalid}}"
         prevent-invalid-input="[[preventInvalidInput]]"
@@ -204,6 +204,7 @@ Paper style ckeditor input type
         }
         config.width = width;
         config.height = height;
+        config.autoParagraph = false;
         this.set('config', JSON.stringify(config));
       },
       /**
