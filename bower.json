@@ -20,6 +20,7 @@
   ],
   "dependencies": {
     "ckeditor": "#full/stable",
+    "moonocolor": "git@github.com:maartentibau/moonocolor.git#master",
     "polymer": "Polymer/polymer#^1.4.0",
     "paper-input": "PolymerElements/paper-input#^1.1.24"
   },

@@ -88,6 +88,7 @@ Paper style ckeditor input type
         tabindex="-1"
         hidden>
 
+      <form>
         <textarea
           id="editor"
           autofocus$="[[autofocus]]"
@@ -97,6 +98,7 @@ Paper style ckeditor input type
           disabled$="[[disabled]]"
           tabindex$="[[tabindex]]">
         </textarea>
+      </form>
 
       <content select="[suffix]"></content>
 
@@ -224,6 +226,10 @@ Paper style ckeditor input type
         this._editor.on('change', () => {
           this.value = this._editor.getData();
           this.fire('editor-changed', this._editor);
+        });
+        this._editor.on('save', () => {
+          this.fire('editor-saved', this._editor);
+          return false;
         });
       },
       /**

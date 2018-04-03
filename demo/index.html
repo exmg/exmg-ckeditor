@@ -81,7 +81,41 @@
           <exmg-ckeditor label="Text Input" inline value="<h3>Test</h3>" required auto-validate></exmg-ckeditor>
         </template>
       </demo-snippet>
-
+      <h3>Inline editor demo with customized toolbar</h3>
+      <demo-snippet>
+        <template>
+          <dom-module id="inline-custom-toolbar">
+            <template>
+              <exmg-ckeditor label="Text Input"
+                             config="[[config]]"
+                             inline value="<h3>Test</h3>" required auto-validate></exmg-ckeditor>
+            </template>
+            <script>
+              Polymer({
+                is: 'inline-custom-toolbar',
+                properties: {
+                  config: {
+                    type: String,
+                    value() {
+                      return JSON.stringify({
+                        toolbar: [
+                          { name: 'document', items: [ 'Source', '-', 'NewPage', 'Save', '-', 'Templates' ] },
+                          { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+                          '/',
+                          { name: 'basicstyles', items: [ 'Bold', 'Italic' ] }
+                        ],
+                        uiColor: '#875d56',
+                        skin: 'moonocolor,/bower_components/moonocolor'
+                      });
+                    }
+                  },
+                }
+              });
+            </script>
+          </dom-module>
+          <inline-custom-toolbar></inline-custom-toolbar>
+        </template>
+      </demo-snippet>
     </div>
   </body>
 </html>
