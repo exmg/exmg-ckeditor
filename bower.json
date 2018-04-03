@@ -19,7 +19,7 @@
     "ckeditor"
   ],
   "dependencies": {
-    "ckeditor": "#standard/stable",
+    "ckeditor": "#full/stable",
     "polymer": "Polymer/polymer#^1.4.0",
     "paper-input": "PolymerElements/paper-input#^1.1.24"
   },
