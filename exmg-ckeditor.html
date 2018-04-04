@@ -50,12 +50,18 @@ Paper style ckeditor input type
       }
     </style>
 
-    <paper-input-container no-label-float="[[noLabelFloat]]" always-float-label auto-validate$="[[autoValidate]]" disabled$="[[disabled]]" invalid="[[invalid]]">
+    <paper-input-container
+      hidden$="[[inline]]"
+      no-label-float="[[noLabelFloat]]"
+      always-float-label
+      auto-validate$="[[autoValidate]]"
+      disabled$="[[disabled]]"
+      invalid="[[invalid]]">
 
       <content select="[prefix]"></content>
 
-      <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
-      <input is="iron-input" id="input"
+      <label hidden$="[[!label]]" aria-hidden="true">[[label]]</label>
+      <input is="iron-input"
         bind-value="{{value}}"
         invalid="{{invalid}}"
         prevent-invalid-input="[[preventInvalidInput]]"
@@ -82,6 +88,7 @@ Paper style ckeditor input type
         tabindex="-1"
         hidden>
 
+      <form>
         <textarea
           id="editor"
           autofocus$="[[autofocus]]"
@@ -91,6 +98,7 @@ Paper style ckeditor input type
           disabled$="[[disabled]]"
           tabindex$="[[tabindex]]">
         </textarea>
+      </form>
 
       <content select="[suffix]"></content>
 
@@ -103,11 +111,15 @@ Paper style ckeditor input type
       </template>
 
     </paper-input-container>
+
+    <div hidden$="[[!inline]]" id="inlineEditor" contenteditable="true">
+        {{value}}
+    </div>
   </template>
 
   <script>
     Polymer({
-
+      /* global CKEDITOR */
       is: 'exmg-ckeditor',
       behaviors: [
         Polymer.IronFormElementBehavior,
@@ -122,6 +134,27 @@ Paper style ckeditor input type
           type: Object,
           observer: '_observeConfig'
         },
+        /**
+         * CKEditor width
+         */
+        width: {
+          type: Number,
+          value: 800
+        },
+        /**
+         * CKEditor height
+         */
+        height: {
+          type: Number,
+          value: 300
+        },
+        /**
+         * Enable inline editing
+         */
+        inline: {
+          type: Boolean,
+          value: false
+        },
         _editorReady: {
           type: Boolean,
           value: false
@@ -130,24 +163,31 @@ Paper style ckeditor input type
       observers: [
         '_observeValue(value, _editorReady)',
         '_observeReady(_editorReady)',
+        '_setEditorDimensions(config, width, height)'
       ],
       /**
-       * Returns a reference to the editor .
+       * Returns a reference to the editor.
        */
       get editor() {
         return this._editor;
       },
-      _observeReady: function(_editorReady) {
+      attached() {
+        this.initializeEditor();
+      },
+      detached() {
+        this.destroyEditor();
+      },
+      _observeReady(_editorReady) {
         if(_editorReady) {
           this.fire('editor-ready', this.editor);
         }
       },
-      _observeValue: function(value, _editorReady) {
+      _observeValue(value, _editorReady) {
         if(_editorReady && this._editor.getData() !== value) {
           this._editor.setData(value);
         }
       },
-      _observeConfig: function(config) {
+      _observeConfig() {
         if(!this._editorReady) {
           return;
         }
@@ -155,30 +195,79 @@ Paper style ckeditor input type
         this.initializeEditor();
       },
       /**
-       *  Initialize editor to replace textarea. Please note that this method will automaticly be called uppon load.
+       * set editor width and height
+       * @param {String} config
+       * @param {Number} width
+       * @param {Number} height
        */
-      initializeEditor: function() {
-        var config = this.config || {};
-        if(typeof config === 'string') {
+      _setEditorDimensions(config, width, height) {
+        if (typeof config === 'string') {
           config = JSON.parse(config);
         }
-        this._editor = CKEDITOR.replace(this.$.editor, config);
-        this._editor.on('instanceReady', () => this._editorReady = true);
-        this._editor.on('change', () => this.value = this._editor.getData());
+        config.width = width;
+        config.height = height;
+        config.autoParagraph = false;
+        this.set('config', JSON.stringify(config));
+      },
+      /**
+       * Initialize editor to replace textarea. Please note that this method will automaticly be called uppon load.
+       */
+      initializeEditor() {
+        let config = this.config || {};
+        if (typeof config === 'string') {
+          config = JSON.parse(config);
+        }
+        this._editor = this.inline ?
+          CKEDITOR.inline(this.$.inlineEditor, config) : CKEDITOR.replace(this.$.editor, config);
+        this._editor.on('instanceReady', () => {
+          this._editorReady = true;
+          this.fire('editor-ready', this._editor);
+        });
+        this._editor.on('change', () => {
+          this.value = this._editor.getData();
+          this.fire('editor-changed', this._editor);
+        });
+        this._editor.on('save', () => {
+          this.fire('editor-saved', this._editor);
+          return false;
+        });
       },
       /**
        *  Destroy editor instance
        */
-      destroyEditor: function() {
-        if(this._editor) {
+      destroyEditor() {
+        if (this._editor) {
           this._editor.destroy();
         }
       },
-      attached: function() {
-        this.initializeEditor();
+      /**
+       * get the editor content
+       * @param {String} html
+       */
+      getData() {
+        return this._editor.getData();
       },
-      detached: function() {
-        this.destroyEditor();
+      /**
+       * set the editor content
+       * @param {String} html
+       */
+      setData(html) {
+        this._editor.setData(html);
+        //console.log(this._editor, this._editor.getData());
+      },
+      /**
+       * Insert text into ckeditor
+       * @param {String} text
+       */
+      insertText(text) {
+        this._editor.insertText(text);
+      },
+      /**
+       * Insert html into ckeditor
+       * @param {String} html
+       */
+      insertHtml(html) {
+        this._editor.insertHtml(html);
       }
     });
   </script>

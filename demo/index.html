@@ -10,11 +10,13 @@
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
     <link rel="import" href="../exmg-ckeditor.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
       .centered {
-        max-width: 700px;
+        max-width: 900px;
       }
     </style>
   </head>
@@ -26,13 +28,93 @@
           <exmg-ckeditor label="Text Input" value="<h3>Test</h3>" required auto-validate></exmg-ckeditor>
         </template>
       </demo-snippet>
-
+      <h3>Themed exmg-ckeditor demo</h3>
       <demo-snippet>
         <template>
           <exmg-ckeditor label="Text Input" config='{"uiColor":"#9AB8F3"}' value="<h3>Test</h3>" required auto-validate></exmg-ckeditor>
         </template>
       </demo-snippet>
-
+      <h3>Insert text demo</h3>
+      <demo-snippet>
+        <template>
+          <dom-module id="insert-text">
+            <style>
+              .container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+              }
+              paper-input {
+                width: 450px;
+              }
+              paper-button {
+                border: 1px solid #000000;
+              }
+            </style>
+            <template>
+              <div class="container">
+                <paper-input label="Enter Text" value="{{text}}"></paper-input>
+                <paper-button on-click="_insertContent">Insert</paper-button>
+              </div>
+              <exmg-ckeditor id="editor" label="Text Input" value="<h3>Test</h3>" required auto-validate></exmg-ckeditor>
+            </template>
+            <script>
+              Polymer({
+                is: 'insert-text',
+                properties: {
+                  text: String
+                },
+                _insertContent: function() {
+                  if (!this.text || this.text === '') return;
+                  this.$.editor.insertText(this.text);
+                }
+              });
+            </script>
+          </dom-module>
+          <insert-text></insert-text>
+        </template>
+      </demo-snippet>
+      <h3>Inline editor demo</h3>
+      <demo-snippet>
+        <template>
+          <exmg-ckeditor label="Text Input" inline value="<h3>Test</h3>" required auto-validate></exmg-ckeditor>
+        </template>
+      </demo-snippet>
+      <h3>Inline editor demo with customized toolbar</h3>
+      <demo-snippet>
+        <template>
+          <dom-module id="inline-custom-toolbar">
+            <template>
+              <exmg-ckeditor label="Text Input"
+                             config="[[config]]"
+                             inline value="<h3>Test</h3>" required auto-validate></exmg-ckeditor>
+            </template>
+            <script>
+              Polymer({
+                is: 'inline-custom-toolbar',
+                properties: {
+                  config: {
+                    type: String,
+                    value() {
+                      return JSON.stringify({
+                        toolbar: [
+                          { name: 'document', items: [ 'Source', '-', 'NewPage', 'Save', '-', 'Templates' ] },
+                          { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+                          '/',
+                          { name: 'basicstyles', items: [ 'Bold', 'Italic' ] }
+                        ],
+                        uiColor: '#875d56'
+                      });
+                    }
+                  },
+                }
+              });
+            </script>
+          </dom-module>
+          <inline-custom-toolbar></inline-custom-toolbar>
+        </template>
+      </demo-snippet>
     </div>
   </body>
 </html>
